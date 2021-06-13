@@ -1,5 +1,6 @@
 const { app, BrowserWindow, Notification, ipcMain } = require('electron')
 
+/** 开发调试代码 */
 try {
   require('electron-reloader')(module)
 } catch (_) {
@@ -15,7 +16,7 @@ app.on('ready', () => {
       nodeIntegration: true
     }
   })
-  win.loadFile('./index.html')
+  win.loadFile('src/pages/index/index.html')
   handleIPC()
 })
 // globalShortcut
@@ -27,14 +28,13 @@ function handleIPC() {
         title: '任务结束',
         body: '是否开始休息',
         actions: [{ text: '开始休息', type: 'button' }],
-        closeButtonText: '继续工作'
       })
       notification.show()
       notification.on('action', () => {
         resolve('rest')
       })
       notification.on('close', () => {
-        resolve('work')
+        resolve('close')
       })
     })
     return res

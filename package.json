@@ -2,7 +2,7 @@
   "name": "tomato",
   "version": "1.0.0",
   "description": "番茄钟",
-  "main": "main.js",
+  "main": "src/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron ."

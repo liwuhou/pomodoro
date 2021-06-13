@@ -1,15 +1,20 @@
-const TOMATO_COLOR = '#bc251a'
+let initCanvas = true
+
 class Progress {
-  constructor(selector, { bgColor, strokeColor } = {}) {
-    const ratio = (window.devicePixelRatio || 1) + 1
+  constructor(selector, { themeColor } = {}) {
+    this.ratio = (window.devicePixelRatio || 1) + 1
     const canvas = document.querySelector(selector)
-    canvas.style.width = canvas.width + 'px'
-    canvas.style.height = canvas.height + 'px'
-    canvas.width *= ratio
-    canvas.height *= ratio
+    if (initCanvas) {
+      canvas.style.width = canvas.width + 'px'
+      canvas.style.height = canvas.height + 'px'
+      canvas.width *= this.ratio
+      canvas.height *= this.ratio
+      initCanvas = false
+    }
     this.origin = { x: canvas.width / 2, y: canvas.height / 2 }
     this.radius = Math.min(canvas.width, canvas.height) / 2 - 1
     this.ctx = canvas.getContext('2d')
+    this.themeColor = themeColor
 
     this.init()
   }
@@ -20,8 +25,8 @@ class Progress {
 
     ctx.beginPath()
     ctx.arc(x, y, radius, 0, 2 * Math.PI)
-    ctx.strokeStyle = TOMATO_COLOR
-    ctx.fillStyle = TOMATO_COLOR
+    ctx.strokeStyle = this.themeColor
+    ctx.fillStyle = this.themeColor
     ctx.fill()
     ctx.closePath()
     // 再绘制一个小白色圆圈来遮盖
@@ -33,7 +38,7 @@ class Progress {
     ctx.fill()
     ctx.stroke()
   }
-  update(progress) {
+  update(progress, text) {
     const { ctx, radius, origin: { x, y } } = this
     const startAngel = -0.5 * Math.PI
     const endAngel = (progress * 2 - 0.5) * Math.PI
@@ -53,6 +58,14 @@ class Progress {
     ctx.strokeStyle = '#fff'
     ctx.fillStyle = '#fff'
     ctx.fill()
+    ctx.stroke()
+
+    ctx.beginPath()
+    ctx.font = `bold ${45 * this.ratio}px Arial`
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.fillStyle = this.themeColor
+    ctx.fillText(text, x, y)
     ctx.stroke()
   }
 }

@@ -2,11 +2,11 @@ const { ipcRenderer } = require('electron')
 const Timer = require('timer.js')
 const Progress = require('../../renders/progress.js')
 const {
-  WORK_DURATION,
-  REST_DURATION,
-  LONG_REST_DURATION,
+  DURATION_TIME_MAP,
   DURATION_COLOR_MAP
 } = require('../../config/consts.js')
+
+let workCount = 0
 
 const makeProgressInstance = (type) => {
   const themeColor = DURATION_COLOR_MAP[type]
@@ -14,36 +14,47 @@ const makeProgressInstance = (type) => {
   return new Progress('#progress', { themeColor })
 }
 
-// 进度圈
-let progress = makeProgressInstance('work')
+const makeTimerInstance = ({ tick = .01, ontick, onend } = {}) => {
+  // 中止上一个时钟
+  if (timer && (timer.getStatus() === 'started' || timer.getStatus() === 'paused')) timer.stop()
 
-const startWork = () => {
-  progress = makeProgressInstance('work')
-  let workTimer = new Timer({
-    tick: .01,
-    ontick: (ms) => {
-      updateTime(ms, WORK_DURATION)
-    },
-    onend: () => {
-      notification()
-      progress.update(1)
-    }
+  timer = new Timer({
+    tick,
+    ontick,
+    onend
   })
-  workTimer.start(WORK_DURATION)
+
+  return timer
 }
 
-const startRest = () => {
-  progress = makeProgressInstance('rest')
-  new Timer({
-    tick: .01,
-    ontick: (ms) => {
-      updateTime(ms, REST_DURATION)
-    },
+// 进度圈
+let progress = makeProgressInstance('work')
+let timer = null
+
+const startClock = (type) => {
+  if (workCount % 4 === 0) {
+    type = type === 'rest' ? 'long_rest' : type
+  }
+  const duration = DURATION_TIME_MAP[type]
+  progress = makeProgressInstance(type)
+  makeTimerInstance({
+    ontick: (ms) => updateTime(ms, duration),
     onend: () => {
-      notification()
-      progress.update(1)
+      progress.update(1, 'done!')
+      notification(type)
     }
-  }).start(REST_DURATION)
+  })
+    .start(duration)
+}
+
+const pauseClose = () => {
+  if (!timer) return
+  const status = timer.getStatus()
+  if (status === 'paused') {
+    timer.start()
+  } else if (status === 'started') {
+    timer.pause()
+  }
 }
 
 const updateTime = (ms, total) => {
@@ -52,27 +63,46 @@ const updateTime = (ms, total) => {
   let s = (ms / 1000).toFixed(0)
   let ss = s % 60
   let mm = (s / 60 - 1).toFixed(0)
-  progress.update(progressValue, `${mm.toString().padStart(2, 0)}: ${ss.toString().padStart(2, 0)}`)
+  progress.update(progressValue, `${mm.toString().padStart(2, 0)}:${ss.toString().padStart(2, 0)}`)
 }
 
-const notification = async () => {
-  let res = await ipcRenderer.invoke('work-notification')
-  if (res === 'rest') {
-    startRest()
-  } else if (res === 'close') {
-    // startWork()
+const notification = async (type) => {
+  if (type === 'work') {
+    addPomodoroResult()
+    let res = await ipcRenderer.invoke('work-notification')
+    if (res === 'rest') {
+      startClock('rest')
+    }
+  } else if (type === 'rest') {
+    let res = await ipcRenderer.invoke('rest-notification')
+    if (res === 'work') {
+      startClose('work')
+    }
   }
+}
+
+const addPomodoroResult = () => {
+  const wrap = document.querySelector('.timer-result')
+  const item = document.createElement('div')
+  item.classList.add('timer-result-item')
+  wrap.appendChild(item)
+  workCount++
 }
 
 window.onload = function () {
   const workBtn = document.querySelector('#work')
   const restBtn = document.querySelector('#rest')
+  const pauseBtn = document.querySelector('#pause')
   const resetBtn = document.querySelector('#reset')
 
   workBtn.addEventListener('click', function () {
-    startWork()
+    startClock('work')
+  })
+  pauseBtn.addEventListener('click', function () {
+    pauseClose()
+    pauseBtn.innerHTML = pauseBtn.innerHTML === 'pause' ? 'start' : 'pause'
   })
   restBtn.addEventListener('click', function () {
-    startRest()
+    startClock('rest')
   })
 }

@@ -39,5 +39,22 @@ function handleIPC() {
     })
     return res
   })
+  ipcMain.handle('rest-notification', async function () {
+    let res = await new Promise((resolve, reject) => {
+      let notification = new Notification({
+        title: '休息结束',
+        body: '开始专注吧',
+        actions: [{ text: '开始专注', type: 'button' }]
+      })
+      notification.show()
+      notification.on('action'), () => {
+        resolve('work')
+      }
+      notification.on('close', () => {
+        resolve('close')
+      })
+    })
+    return res
+  })
 }
 

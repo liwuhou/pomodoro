@@ -32,7 +32,7 @@ class Progress {
     // 再绘制一个小白色圆圈来遮盖
     ctx.beginPath()
     ctx.moveTo(x, y)
-    ctx.arc(x, y, radius - 20, 0, 2 * Math.PI, false)
+    ctx.arc(x, y, radius - 25, 0, 2 * Math.PI)
     ctx.strokeStyle = '#fff'
     ctx.fillStyle = '#fff'
     ctx.fill()
@@ -45,7 +45,7 @@ class Progress {
     ctx.beginPath()
     // 当前进度
     ctx.moveTo(x, y)
-    ctx.arc(x, y, radius, startAngel, endAngel, false)
+    ctx.arc(x, y, radius, startAngel, endAngel)
     ctx.strokeStyle = '#fff'
     ctx.fillStyle = '#fff'
     ctx.fill()
@@ -54,7 +54,7 @@ class Progress {
     // 再绘制一个小白色圆圈来遮盖
     ctx.beginPath()
     ctx.moveTo(x, y)
-    ctx.arc(x, y, radius - 20, 0, 2 * Math.PI, false)
+    ctx.arc(x, y, radius - 25, 0, 2 * Math.PI)
     ctx.strokeStyle = '#fff'
     ctx.fillStyle = '#fff'
     ctx.fill()

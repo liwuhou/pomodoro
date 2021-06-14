@@ -60,13 +60,15 @@ class Progress {
     ctx.fill()
     ctx.stroke()
 
-    ctx.beginPath()
-    ctx.font = `bold ${45 * this.ratio}px Arial`
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.fillStyle = this.themeColor
-    ctx.fillText(text, x, y)
-    ctx.stroke()
+    if (text) {
+      ctx.beginPath()
+      ctx.font = `bold ${45 * this.ratio}px Arial`
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+      ctx.fillStyle = this.themeColor
+      ctx.fillText(text, x, y)
+      ctx.stroke()
+    }
   }
 }
 

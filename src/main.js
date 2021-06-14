@@ -47,9 +47,9 @@ function handleIPC() {
         actions: [{ text: '开始专注', type: 'button' }]
       })
       notification.show()
-      notification.on('action'), () => {
+      notification.on('action', () => {
         resolve('work')
-      }
+      })
       notification.on('close', () => {
         resolve('close')
       })

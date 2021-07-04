@@ -1,12 +1,10 @@
 
 // 工作时钟
-// const WORK_DURATION = 25 * 60
-const WORK_DURATION = 2
+const WORK_DURATION = 25 * 60
 // 休息钟
-// const REST_DURATION = 5 * 60
-const REST_DURATION = 1
+const REST_DURATION = 5 * 60
 // 长休息钟
-const LONG_REST_DURATION = 1.5
+const LONG_REST_DURATION = 15 * 60
 
 module.exports = {
   WORK_DURATION,

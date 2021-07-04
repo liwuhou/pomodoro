@@ -1,11 +1,14 @@
 {
   "name": "tomato",
+  "title": "pomodoro",
   "version": "1.0.0",
   "description": "番茄钟",
+  "icon": "src/assets/images/icon.svg",
   "main": "src/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron ."
+    "start": "electron .",
+    "build:mac": "electron-packager ./ pomodoro --platform=darwin --arch=x64 --icon=./src/assets/images/icon.svg --out=./dist"
   },
   "author": "",
   "license": "ISC",
